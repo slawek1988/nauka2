@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "329812762674",
+    "firebase_url": "https://wsb-zti.firebaseio.com",
+    "project_id": "wsb-zti",
+    "storage_bucket": "wsb-zti.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329812762674:android:02fc0924fbfa6e096b1c2b",
+        "android_client_info": {
+          "package_name": "com.example.wsb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "329812762674-thk3ph33vgpv68s23g605pcfvl840kph.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wsb",
+            "certificate_hash": "40c720cc95c02975ab88693d181becf5484136e3"
+          }
+        },
+        {
+          "client_id": "329812762674-j8j03tgpk0q6v0tun7vjk7k5so6e1o4i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASKk9_BXXMDc40-5G25atOgz1tpoyxwTs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "329812762674-j8j03tgpk0q6v0tun7vjk7k5so6e1o4i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
