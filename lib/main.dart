@@ -80,6 +80,10 @@ class _MyHomePageState extends State<MyHomePage> {
         (await _auth.signInWithCredential(credential)).user;
     print("signed in " + user.displayName);
 
+    var d = await databaseReference.collection("users");
+
+    print(d);
+
     setState(() {
       _counter = 1000;
     });
