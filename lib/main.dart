@@ -56,9 +56,8 @@ class _MyHomePageState extends State<MyHomePage> {
         (await _auth.signInWithCredential(credential)).user;
     print("signed in " + user.displayName);
 
-    var d = await databaseReference.collection("users");
-
-    print(d);
+//    var d = await databaseReference.collection("users");
+//    print(d);
 
     setState(() {
       _user = user;
@@ -100,14 +99,14 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildUserWidget(FirebaseUser title) {
-    if (title == null) {
+  Widget _buildUserWidget(FirebaseUser user) {
+    if (user == null) {
       return Text("Login With Google");
     } else {
       return Row(
         children: [
-          Text(title.displayName),
-          Image.network(title.photoUrl)],
+          Text(user.displayName),
+          Image.network(user.photoUrl)],
       );
     }
   }
