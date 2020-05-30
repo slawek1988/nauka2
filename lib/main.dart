@@ -29,6 +29,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<String> users = [];
+
   int _counter = 0;
   FirebaseUser _user;
 
@@ -60,9 +62,15 @@ class _MyHomePageState extends State<MyHomePage> {
       print("GOT RESPONSE FROM DATABASE ${event.runtimeType}");
 
       event.documents.forEach((element) {
-        print("ELEMENT DOCUMENT ${element['name']}" );
-      });
+        users.add("${element['name']}");
 
+//        setState(() {
+//          users = event.documents.map((e) => e['name']).toList();
+//        });
+      });
+      setState(() {
+        users = users; //. LOL
+      });
     });
 
     setState(() {
@@ -73,37 +81,51 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            RaisedButton(
-              child: _buildUserWidget(_user),
-              onPressed: () {
-                _loginWithGoogle();
-              },
-            )
-          ],
+    if (users.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(widget.title),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.android),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'You have pushed the button this many times:',
+              ),
+              Text(
+                '$_counter',
+                style: Theme.of(context).textTheme.headline4,
+              ),
+              RaisedButton(
+                child: _buildUserWidget(_user),
+                onPressed: () {
+                  _loginWithGoogle();
+                },
+              )
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _incrementCounter,
+          tooltip: 'Increment',
+          child: Icon(Icons.android),
+        ), // This trailing comma makes auto-formatting nicer for build methods.
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(widget.title),
+        ),
+        body: ListView.builder(
+            itemCount: users.length,
+            itemBuilder: (BuildContext ctxt, int index) {
+              return ListTile(title: Text(users[index]));
+            }),
+      );
+    }
   }
 
   Widget _buildUserWidget(FirebaseUser user) {
