@@ -44,7 +44,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _loginWithGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
 
     final AuthCredential credential = GoogleAuthProvider.getCredential(
       accessToken: googleAuth.accessToken,
@@ -55,9 +56,14 @@ class _MyHomePageState extends State<MyHomePage> {
         (await _auth.signInWithCredential(credential)).user;
     print("signed in " + user.displayName);
 
-    var d = await databaseReference.collection("users");
+    databaseReference.collection('users').snapshots().listen((event) {
+      print("GOT RESPONSE FROM DATABASE ${event.runtimeType}");
 
-    print(d);
+      event.documents.forEach((element) {
+        print("ELEMENT DOCUMENT ${element['name']}" );
+      });
+
+    });
 
     setState(() {
       _user = user;
