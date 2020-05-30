@@ -11,11 +11,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'WSB App',
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'WSB App'),
     );
   }
 }
@@ -44,8 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _loginWithGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
     final AuthCredential credential = GoogleAuthProvider.getCredential(
       accessToken: googleAuth.accessToken,
@@ -56,8 +55,9 @@ class _MyHomePageState extends State<MyHomePage> {
         (await _auth.signInWithCredential(credential)).user;
     print("signed in " + user.displayName);
 
-//    var d = await databaseReference.collection("users");
-//    print(d);
+    var d = await databaseReference.collection("users");
+
+    print(d);
 
     setState(() {
       _user = user;
@@ -69,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(widget.title),
       ),
       body: Center(
@@ -104,9 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return Text("Login With Google");
     } else {
       return Row(
-        children: [
-          Text(user.displayName),
-          Image.network(user.photoUrl)],
+        children: [Text(user.displayName), Image.network(user.photoUrl)],
       );
     }
   }
