@@ -44,6 +44,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  @override
+  void deactivate() {
+    super.deactivate();
+  }
+
   void _loginWithGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
@@ -63,13 +68,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
       event.documents.forEach((element) {
         users.add("${element['name']}");
-
-//        setState(() {
-//          users = event.documents.map((e) => e['name']).toList();
-//        });
       });
       setState(() {
-        users = users; //. LOL
+        users = users.toSet().toList(); //. LOL
       });
     });
 
