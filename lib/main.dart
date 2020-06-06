@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -29,25 +31,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> users = [];
+  List<String> chatMessages = [];
 
-  int _counter = 0;
   FirebaseUser _user;
 
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final databaseReference = Firestore.instance;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  void deactivate() {
-    super.deactivate();
-  }
+  var _textController = TextEditingController(text: "Write here");
 
   void _loginWithGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
@@ -63,26 +54,25 @@ class _MyHomePageState extends State<MyHomePage> {
         (await _auth.signInWithCredential(credential)).user;
     print("signed in " + user.displayName);
 
-    databaseReference.collection('users').snapshots().listen((event) {
+    databaseReference.collection('chat').snapshots().listen((event) {
       print("GOT RESPONSE FROM DATABASE ${event.runtimeType}");
 
       event.documents.forEach((element) {
-        users.add("${element['name']}");
+        chatMessages.add("${element['message']} from ${element['user']}");
       });
       setState(() {
-        users = users.toSet().toList(); //. LOL
+        chatMessages = chatMessages.toSet().toList(); //. LOL
       });
     });
 
     setState(() {
       _user = user;
-      _counter = 1000;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (users.isEmpty) {
+    if (chatMessages.isEmpty) {
       return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -92,13 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                'You have pushed the button this many times:',
-              ),
-              Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.headline4,
-              ),
               RaisedButton(
                 child: _buildUserWidget(_user),
                 onPressed: () {
@@ -108,23 +91,43 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _incrementCounter,
-          tooltip: 'Increment',
-          child: Icon(Icons.android),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
       );
     } else {
       return Scaffold(
         appBar: AppBar(
+          actions: _isLoggedIn(),
           centerTitle: true,
           title: Text(widget.title),
         ),
-        body: ListView.builder(
-            itemCount: users.length,
-            itemBuilder: (BuildContext ctxt, int index) {
-              return ListTile(title: Text(users[index]));
-            }),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: chatMessages.length,
+                  itemBuilder: (BuildContext ctx, int index) {
+                    return ListTile(title: Text(chatMessages[index]));
+                  }),
+            ),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blue, width: 4.0)),
+                  child: TextField(
+                    focusNode: FocusNode(),
+                    cursorColor: Colors.lightGreen,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.black, height: 5),
+                    onSubmitted: (text) {
+                      _sendMessageToFirebase(text);
+                      _textController.value = TextEditingValue(text: "");
+                    },
+                    controller: _textController,
+                  ),
+                ))
+          ],
+        ),
       );
     }
   }
@@ -136,6 +139,28 @@ class _MyHomePageState extends State<MyHomePage> {
       return Row(
         children: [Text(user.displayName), Image.network(user.photoUrl)],
       );
+    }
+  }
+
+  List<Widget> _isLoggedIn() {
+    if (_user == null) {
+      return [Text("Guest")];
+    } else {
+      return [
+        Image.network("${_user.photoUrl}"),
+        Text(
+          _user.displayName,
+          style: TextStyle(color: Colors.white),
+        ),
+      ];
+    }
+  }
+
+  void _sendMessageToFirebase(String text) async {
+    if (text != "Write here") {
+      DocumentReference ref = await databaseReference
+          .collection("chat")
+          .add({'message': text, 'user': _user.email});
     }
   }
 }
