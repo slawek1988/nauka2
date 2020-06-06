@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: 'WSB App'),
+      home: MyHomePage(title: 'WSB Students Chat'),
     );
   }
 }
@@ -54,10 +54,10 @@ class _MyHomePageState extends State<MyHomePage> {
         (await _auth.signInWithCredential(credential)).user;
     print("signed in " + user.displayName);
 
-    databaseReference.collection('chat').snapshots().listen((event) {
+    databaseReference.collection('chat').limit(50).snapshots().listen((event) {
       print("GOT RESPONSE FROM DATABASE ${event.runtimeType}");
 
-      event.documents.forEach((element) {
+      event.documents.reversed.forEach((element) {
         chatMessages.add("${element['message']} from ${element['user']}");
       });
       setState(() {
@@ -95,6 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       return Scaffold(
         appBar: AppBar(
+          backgroundColor: _user == null ? Colors.red : Colors.blueGrey,
           actions: _isLoggedIn(),
           centerTitle: true,
           title: Text(widget.title),
